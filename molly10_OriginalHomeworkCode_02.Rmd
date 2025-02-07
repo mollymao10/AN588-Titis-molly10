@@ -1,0 +1,105 @@
+---
+title: "molly10_OriginalHomeworkCode_02"
+author: "Yinuo Mao"
+date: "2025-02-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+install.packages("ggplot2")
+install.packages("ggplot2")
+install.packages("dplyr")
+```
+
+## Prompt
+
+Every Saturday morning, a primatologist records titi monkey calls within a 2-hour window. We assume the number of calls follows a Poisson distribution with a mean of 15 calls per session. The goal is to compute probabilities for specific counts, plot the probability mass function (PMF), and simulate 2 years of observations.
+
+# 1. What is the probability that she will hear more than 8 calls during any given session?
+```{r}
+# Set seed to ensure getting the same random results every time
+set.seed(1)
+
+# Generate random call counts using normal distribution
+call_counts <- round(rnorm(10000, 15, 4))
+
+# Ensure values are non-negative
+call_counts[call_counts < 0] <- 0
+
+#check the outcome
+summary(call_counts)
+
+# Calculate the probability using mean() function
+prob_more_than_8 <- mean(call_counts > 8)
+
+# Print result
+prob_more_than_8
+```
+
+# 2. What is the probability that she will hear no calls in a session?
+
+```{r}
+# Calculate the probability of hearing 0 calls
+prob_zero_calls <- mean(call_counts == 0)
+
+# Print result
+prob_zero_calls
+```
+
+# 3. What is the probability that she will hear exactly 3 calls in a session?
+
+```{r}
+# Calculate the probability of hearing exactly 3 calls
+prob_three_calls <- mean(call_counts == 3)
+
+# Print result
+prob_three_calls
+```
+
+# 4. Plot the relevant Poisson mass function over the values in range 0 ≤ x ≤ 30. 
+
+```{r}
+library(ggplot2)
+
+# Define the range of values for x (number of calls)
+x_values <- 0:30
+
+# Calculate the Poisson probabilities
+poisson_probs <- dpois(x_values, lambda = 15)
+
+# Create the Poisson mass function plot
+ggplot(data.frame(x_values, poisson_probs), aes(x = x_values, y = poisson_probs)) +
+  geom_col(fill = "blue") +  
+  # Using geom_col() instead of geom_bar(stat = "identity")
+  labs(title = "Poisson Mass Function for Titi Monkey Calls (λ = 15)",
+       x = "Number of Calls",
+       y = "Probability")
+```
+
+# 5.Simulate 104 results from this distribution (i.e., 2 years of Saturday monitoring sessions).
+
+```{r}
+# Set seed
+set.seed(2)
+
+# Simulate 104 observations manually
+simulated_calls <- round(rnorm(104, 15, 4))
+
+# Display summary of the simulated data
+summary(simulated_calls)
+```
+
+# 6. Plot the simulated results using hist() and use xlim() to set the horizontal limits to be from 0 to 30. How does your histogram compare to the shape of the probability mass function you plotted above?
+
+```{r}
+# Plot histogram of simulated calls
+hist(simulated_calls, breaks = 15, col = "purple",
+     main = "Histogram of Simulated Titi Monkey Calls",
+     xlab = "Number of Calls", ylab = "Frequency",
+     xlim = c(0, 30))
+```
+### The histogram of the simulated data closely follows the shape of the Poisson mass function. Both distributions are centered around 15 calls, with a similar spread. However, the histogram has some random variation due to the limited number of simulations, whereas the Poisson mass function represents the theoretical probabilities for an infinite number of observations.
